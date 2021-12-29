@@ -76,11 +76,11 @@ async function CCCSalesBot({
             },
             {
               name: 'Tx Hash',
-              value: `https://snowtrace.io/tx/${event.transactionHash}`,
+              value: `[${event.transactionHash}](https://snowtrace.io/tx/${event.transactionHash})`,
             },
             {
               name: 'Wallet',
-              value: `https://snowtrace.io/token/0x4939B3313E73ae8546b90e53E998E82274afDbDB?a=${from}`,
+              value: `[${from}](https://snowtrace.io/token/0x4939B3313E73ae8546b90e53E998E82274afDbDB?a=${from})`,
             },
             {
               name: 'Block Time',
@@ -114,11 +114,11 @@ async function CCCSalesBot({
             },
             {
               name: 'Tx Hash',
-              value: `https://snowtrace.io/tx/${event.transactionHash}`,
+              value: `[${event.transactionHash}](https://snowtrace.io/tx/${event.transactionHash})`,
             },
             {
               name: 'Wallet',
-              value: `https://snowtrace.io/token/0x4939B3313E73ae8546b90e53E998E82274afDbDB?a=${from}`,
+              value: `[${from}](https://snowtrace.io/token/0x4939B3313E73ae8546b90e53E998E82274afDbDB?a=${from})`,
             },
             {
               name: 'Block Time',
