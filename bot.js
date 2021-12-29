@@ -51,11 +51,9 @@ async function CCCSalesBot({
         res.json()
       );
       const avaxPrice = snowtraceResponse.result.ethusd;
-      console.log('avaxPrice: ', avaxPrice);
       let message;
 
       if (buyCCC > sellCCC) {
-        console.log('--- BUY EVENT ---');
         const avaxDollarVal = avaxForCCC * avaxPrice;
         message = createMessage({
           color: '#66ff82',
@@ -94,7 +92,6 @@ async function CCCSalesBot({
           ],
         });
       } else if (sellCCC > buyCCC) {
-        console.log('--- SELL EVENT ---');
         const avaxDollarVal = cccForAvax * avaxPrice;
         message = createMessage({
           color: '#ff6666',
