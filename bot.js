@@ -110,7 +110,7 @@ async function CCCSalesBot({
               value: `${cccForAvax.toLocaleString(
                 undefined,
                 LOCALE_FRACTION
-              )}🔺 (${avaxDollarVal.toLocaleString('en-IN', LOCALE_FRACTION)})`,
+              )}🔺 ($${avaxDollarVal.toLocaleString('en-IN', LOCALE_FRACTION)})`,
             },
             {
               name: 'Tx Hash',
