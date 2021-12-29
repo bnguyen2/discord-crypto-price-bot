@@ -100,7 +100,7 @@ async function CCCSalesBot({
             { name: 'Transaction', value: 'Sold CCC' },
             {
               name: 'Sold',
-              value: `$${sellCCC.toLocaleString(
+              value: `${sellCCC.toLocaleString(
                 undefined,
                 LOCALE_FRACTION
               )} CCC`,
