@@ -71,7 +71,7 @@ async function CCCSalesBot({
               )})`,
             },
             {
-              name: 'Receive',
+              name: 'Received',
               value: `${buyCCC.toLocaleString(undefined, LOCALE_FRACTION)} CCC`,
             },
             {
@@ -106,7 +106,7 @@ async function CCCSalesBot({
               )} CCC`,
             },
             {
-              name: 'Receive',
+              name: 'Received',
               value: `${cccForAvax.toLocaleString(
                 undefined,
                 LOCALE_FRACTION
