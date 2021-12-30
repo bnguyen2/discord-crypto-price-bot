@@ -59,7 +59,7 @@ async function CCCSalesBot({
           color: '#66ff82',
           txHash: event.transactionHash,
           fields: [
-            { name: 'Transaction', value: 'Bought CCC' },
+            { name: 'Transaction', value: 'Buy CCC' },
             {
               name: 'Spent',
               value: `${avaxForCCC.toLocaleString(
@@ -97,9 +97,9 @@ async function CCCSalesBot({
           color: '#ff6666',
           txHash: event.transactionHash,
           fields: [
-            { name: 'Transaction', value: 'Sold CCC' },
+            { name: 'Transaction', value: 'Sell CCC' },
             {
-              name: 'Sold',
+              name: 'Spent',
               value: `${sellCCC.toLocaleString(
                 undefined,
                 LOCALE_FRACTION
