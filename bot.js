@@ -1,10 +1,15 @@
-const { MessageEmbed } = require('discord.js');
 const { ethers } = require('ethers');
-const { format } = require('date-fns');
 const fetch = require('node-fetch');
 
-const { discordSetup } = require('./discord');
-const LOCALE_FRACTION = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+const {
+  discordSetup,
+  createMessage,
+  buyFields,
+  sellFields,
+} = require('./discord');
+
+const EXPECTED_PONG_BACK = 15000;
+const KEEP_ALIVE_CHECK_INTERVAL = 30000;
 
 async function CCCSalesBot({
   WEBSOCKET_URI,
@@ -27,117 +32,93 @@ async function CCCSalesBot({
   const provider = new ethers.providers.WebSocketProvider(WEBSOCKET_URI);
   const pairContract = new ethers.Contract(cccAvaxPair, ABI, provider);
 
-  const createMessage = ({ color, fields }) =>
-    new MessageEmbed()
-      .setThumbnail(
-        'https://cdn.discordapp.com/attachments/924434254664986637/925844475161501787/gradientsymbol2x.png'
-      )
-      .setColor(color)
-      .addFields(fields);
+  let pingTimeout = null;
+  let keepAliveInterval = null;
 
-  pairContract.on(
-    'Swap',
-    async (to, amt0In, amt1In, amt0Out, amt1Out, from, event) => {
-      const buyCCC = Number(ethers.utils.formatUnits(amt0Out, 9) * 0.9);
-      const avaxForCCC = Number(ethers.utils.formatUnits(amt1In, 18));
+  provider._websocket.on('open', () => {
+    keepAliveInterval = setInterval(() => {
+      console.log('Checking if the connection is alive, sending a ping');
 
-      const sellCCC = Number(ethers.utils.formatUnits(amt0In, 9));
-      const cccForAvax = Number(ethers.utils.formatUnits(amt1Out, 18));
-      const block = await event.getBlock();
+      provider._websocket.ping();
 
-      const snowTraceAPI = `https://api.snowtrace.io/api?module=stats&action=ethprice&apikey=${SNOWTRACE_API_KEY}`;
+      // Use `WebSocket#terminate()`, which immediately destroys the connection,
+      // instead of `WebSocket#close()`, which waits for the close timer.
+      // Delay should be equal to the interval at which your server
+      // sends out pings plus a conservative assumption of the latency.
+      pingTimeout = setTimeout(() => {
+        provider._websocket.terminate();
+      }, EXPECTED_PONG_BACK);
+    }, KEEP_ALIVE_CHECK_INTERVAL);
 
-      const snowtraceResponse = await fetch(snowTraceAPI).then((res) =>
-        res.json()
-      );
-      const avaxPrice = snowtraceResponse.result.ethusd;
-      let message;
+    pairContract.on(
+      'Swap',
+      async (to, amt0In, amt1In, amt0Out, amt1Out, from, event) => {
+        console.log('Swap event happened!');
+        const buyCCC = Number(ethers.utils.formatUnits(amt0Out, 9) * 0.9);
+        const avaxForCCC = Number(ethers.utils.formatUnits(amt1In, 18));
 
-      if (buyCCC > sellCCC) {
-        const avaxDollarVal = avaxForCCC * avaxPrice;
-        message = createMessage({
-          color: '#66ff82',
-          txHash: event.transactionHash,
-          fields: [
-            { name: 'Transaction', value: 'Buy CCC' },
-            {
-              name: 'Spent',
-              value: `${avaxForCCC.toLocaleString(
-                undefined,
-                LOCALE_FRACTION
-              )}🔺 ($${avaxDollarVal.toLocaleString(
-                'en-IN',
-                LOCALE_FRACTION
-              )})`,
-            },
-            {
-              name: 'Received',
-              value: `${buyCCC.toLocaleString(undefined, LOCALE_FRACTION)} CCC`,
-            },
-            {
-              name: 'Tx Hash',
-              value: `[${event.transactionHash}](https://snowtrace.io/tx/${event.transactionHash})`,
-            },
-            {
-              name: 'Wallet',
-              value: `[${from}](https://snowtrace.io/token/0x4939B3313E73ae8546b90e53E998E82274afDbDB?a=${from})`,
-            },
-            {
-              name: 'Block Time',
-              value: format(
-                new Date(parseInt(block.timestamp) * 1000),
-                'MMM do y h:mm a'
-              ),
-            },
-          ],
-        });
-      } else if (sellCCC > buyCCC) {
-        const avaxDollarVal = cccForAvax * avaxPrice;
-        message = createMessage({
-          color: '#ff6666',
-          txHash: event.transactionHash,
-          fields: [
-            { name: 'Transaction', value: 'Sell CCC' },
-            {
-              name: 'Spent',
-              value: `${sellCCC.toLocaleString(
-                undefined,
-                LOCALE_FRACTION
-              )} CCC`,
-            },
-            {
-              name: 'Received',
-              value: `${cccForAvax.toLocaleString(
-                undefined,
-                LOCALE_FRACTION
-              )}🔺 ($${avaxDollarVal.toLocaleString('en-IN', LOCALE_FRACTION)})`,
-            },
-            {
-              name: 'Tx Hash',
-              value: `[${event.transactionHash}](https://snowtrace.io/tx/${event.transactionHash})`,
-            },
-            {
-              name: 'Wallet',
-              value: `[${from}](https://snowtrace.io/token/0x4939B3313E73ae8546b90e53E998E82274afDbDB?a=${from})`,
-            },
-            {
-              name: 'Block Time',
-              value: format(
-                new Date(parseInt(block.timestamp) * 1000),
-                'MMM do y h:mm a'
-              ),
-            },
-          ],
-        });
+        const sellCCC = Number(ethers.utils.formatUnits(amt0In, 9));
+        const cccForAvax = Number(ethers.utils.formatUnits(amt1Out, 18));
+        const block = await event.getBlock();
+
+        const snowTraceAPI = `https://api.snowtrace.io/api?module=stats&action=ethprice&apikey=${SNOWTRACE_API_KEY}`;
+
+        const snowtraceResponse = await fetch(snowTraceAPI).then((res) =>
+          res.json()
+        );
+        const avaxPrice = snowtraceResponse.result.ethusd;
+        let message;
+
+        if (buyCCC > sellCCC) {
+          const avaxDollarVal = avaxForCCC * avaxPrice;
+          message = createMessage({
+            color: '#66ff82',
+            txHash: event.transactionHash,
+            fields: buyFields(
+              avaxForCCC,
+              buyCCC,
+              avaxDollarVal,
+              event,
+              from,
+              block
+            ),
+          });
+        } else if (sellCCC > buyCCC) {
+          const avaxDollarVal = cccForAvax * avaxPrice;
+          message = createMessage({
+            color: '#ff6666',
+            txHash: event.transactionHash,
+            fields: sellFields(
+              cccForAvax,
+              sellCCC,
+              avaxDollarVal,
+              event,
+              from,
+              block
+            ),
+          });
+        }
+
+        try {
+          await discordChannel.send({ embeds: [message] });
+        } catch (err) {
+          console.log('Error sending message', ' ', err.message);
+        }
       }
+    );
+  });
 
-      try {
-        await discordChannel.send({ embeds: [message] });
-      } catch (err) {
-        console.log('Error sending message', ' ', err.message);
-      }
-    }
-  );
+  provider._websocket.on('close', () => {
+    console.log('The websocket connection was closed');
+    clearInterval(keepAliveInterval);
+    clearTimeout(pingTimeout);
+    startConnection();
+  });
+
+  provider._websocket.on('pong', () => {
+    console.log('Received pong, so connection is alive, clearing the timeout');
+    clearInterval(pingTimeout);
+  });
 }
 
 module.exports = CCCSalesBot;
