@@ -8,15 +8,17 @@ const {
   sellFields,
 } = require('./discord');
 
-const EXPECTED_PONG_BACK = 15000;
-const KEEP_ALIVE_CHECK_INTERVAL = 30000;
-
-async function CCCSalesBot({
+const {
   WEBSOCKET_URI,
   DISCORD_BOT_TOKEN,
   DISCORD_CHANNEL_ID,
   SNOWTRACE_API_KEY,
-}) {
+} = require('./secrets.json');
+
+const EXPECTED_PONG_BACK = 15000;
+const KEEP_ALIVE_CHECK_INTERVAL = 30000;
+
+async function CCCSalesBot() {
   console.log('Setting up discord bot');
   const discordChannel = await discordSetup(
     DISCORD_BOT_TOKEN,
@@ -115,7 +117,7 @@ async function CCCSalesBot({
     );
     clearInterval(keepAliveInterval);
     clearTimeout(pingTimeout);
-    startConnection();
+    CCCSalesBot();
   });
 
   provider._websocket.on('pong', () => {
