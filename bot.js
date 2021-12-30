@@ -108,8 +108,11 @@ async function CCCSalesBot({
     );
   });
 
-  provider._websocket.on('close', () => {
-    console.log('The websocket connection was closed');
+  provider._websocket.on('close', (err) => {
+    console.error(
+      'The websocket connection was closed: ',
+      JSON.stringify(err, null, 2)
+    );
     clearInterval(keepAliveInterval);
     clearTimeout(pingTimeout);
     startConnection();
