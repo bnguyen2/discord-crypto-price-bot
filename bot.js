@@ -1,5 +1,5 @@
 const { ethers } = require('ethers');
-const fetch = require('node-fetch');
+const { fetchTokenPrice } = require('./utils');
 
 const {
   discordSetup,
@@ -12,7 +12,6 @@ const {
   WEBSOCKET_URI,
   DISCORD_BOT_TOKEN,
   DISCORD_CHANNEL_ID,
-  SNOWTRACE_API_KEY,
 } = require('./secrets.json');
 
 const EXPECTED_PONG_BACK = 15000;
@@ -27,6 +26,7 @@ async function CCCSalesBot() {
   console.log('Setting up discord bot complete');
 
   const cccAvaxPair = '0x306e2fe26cb13f1315d83a2f2297c12b14574dc2';
+  const wAVAX = '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7';
 
   const ABI = [
     'event Swap(address indexed sender, uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address indexed to)',
@@ -58,17 +58,11 @@ async function CCCSalesBot() {
         console.log('Swap event happened!');
         const buyCCC = Number(ethers.utils.formatUnits(amt0Out, 9) * 0.9);
         const avaxForCCC = Number(ethers.utils.formatUnits(amt1In, 18));
-
         const sellCCC = Number(ethers.utils.formatUnits(amt0In, 9));
         const cccForAvax = Number(ethers.utils.formatUnits(amt1Out, 18));
         const block = await event.getBlock();
+        const avaxPrice = await fetchTokenPrice(wAVAX, 'avalanche');
 
-        const snowTraceAPI = `https://api.snowtrace.io/api?module=stats&action=ethprice&apikey=${SNOWTRACE_API_KEY}`;
-
-        const snowtraceResponse = await fetch(snowTraceAPI).then((res) =>
-          res.json()
-        );
-        const avaxPrice = snowtraceResponse.result.ethusd;
         let message;
 
         if (buyCCC > sellCCC) {
