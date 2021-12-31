@@ -16,6 +16,7 @@ const {
 
 const EXPECTED_PONG_BACK = 15000;
 const KEEP_ALIVE_CHECK_INTERVAL = 30000;
+const MINIMUM_AVAX = 3;
 
 async function CCCSalesBot() {
   console.log('Setting up discord bot');
@@ -96,7 +97,10 @@ async function CCCSalesBot() {
         }
 
         try {
-          await discordChannel.send({ embeds: [message] });
+          console.log('Sending message to discord');
+          if (avaxForCCC > MINIMUM_AVAX || cccForAvax > MINIMUM_AVAX) {
+            await discordChannel.send({ embeds: [message] });
+          }
         } catch (err) {
           console.log('Error sending message', ' ', err.message);
         }
