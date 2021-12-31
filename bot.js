@@ -97,8 +97,8 @@ async function CCCSalesBot() {
         }
 
         try {
-          console.log('Sending message to discord');
           if (avaxForCCC > MINIMUM_AVAX || cccForAvax > MINIMUM_AVAX) {
+            console.log('Sending message to discord');
             await discordChannel.send({ embeds: [message] });
           }
         } catch (err) {
