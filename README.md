@@ -1,15 +1,7 @@
-# Basic Sample Hardhat Project
+# Discord Crypto Price Bot
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+A simple discord bot that listens for all buy/sell swaps of a particular crypto trading pair. Currently set for WAVAX-CCC pair but can be updated to be any pair on the avalanche blockchain. You can also set a minimum amount threshold (e.g. 2 Avax) for the bot to send posts to a discord channel to filter out any small transactions. Bot configuration is currently built for avalanche chain but can be updated to any chain with slight configuration changes to the respective transactions explorer website.
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
+```
+npm start
 ```
