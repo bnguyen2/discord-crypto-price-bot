@@ -40,7 +40,7 @@ async function fetchCCCPrice() {
 
     return {
       price: cccPrice,
-      marketCap: parseFloat(cccPrice, 10) * 1500000000000,
+      marketCap: parseFloat(cccPrice) * 1500000000000,
     };
   } catch (err) {
     console.error('err', JSON.stringify(err, null, 2));
