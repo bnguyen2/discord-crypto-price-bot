@@ -16,6 +16,7 @@
     "bignumber.js": "^9.0.2",
     "date-fns": "^2.27.0",
     "discord.js": "^13.4.0",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "numeral": "^2.0.6"
   }
 }

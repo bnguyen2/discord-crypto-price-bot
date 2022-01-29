@@ -1,5 +1,6 @@
 const { Client, Intents, MessageEmbed } = require('discord.js');
 const { format } = require('date-fns');
+const numeral = require('numeral');
 
 const LOCALE_FRACTION = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
 
