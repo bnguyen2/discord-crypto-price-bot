@@ -24,7 +24,7 @@ const createMessage = ({ color, fields }) =>
     .setColor(color)
     .addFields(fields);
 
-const buyFields = (avax, ccc, avaxDollarVal, event, from, block) => {
+const buyFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
   return [
     { name: 'Transaction', value: 'Buy CCC' },
     {
@@ -39,6 +39,17 @@ const buyFields = (avax, ccc, avaxDollarVal, event, from, block) => {
       value: `${ccc.toLocaleString(undefined, LOCALE_FRACTION)} CCC`,
     },
     {
+      name: 'CCC Price',
+      value: cccData.price,
+
+      inline: true,
+    },
+    {
+      name: 'Market Cap',
+      value: numeral(cccData.marketCap).format('$0.0a').toUpperCase(),
+      inline: true,
+    },
+    {
       name: 'Tx Hash',
       value: `[${event.transactionHash}](https://snowtrace.io/tx/${event.transactionHash})`,
     },
@@ -53,10 +64,25 @@ const buyFields = (avax, ccc, avaxDollarVal, event, from, block) => {
         'MMM do y h:mm a'
       ),
     },
+    {
+      name: 'CCC Website',
+      value: `[Link](https://crosschaincapital.finance/)`,
+      inline: true,
+    },
+    {
+      name: 'TJ',
+      value: `[Buy](https://traderjoexyz.com/trade?outputCurrency=0x4939B3313E73ae8546b90e53E998E82274afDbDB)`,
+      inline: true,
+    },
+    {
+      name: 'Dex Screener',
+      value: `[Link](https://dexscreener.com/avalanche/0x306e2fe26cb13f1315d83a2f2297c12b14574dc2)`,
+      inline: true,
+    },
   ];
 };
 
-const sellFields = (avax, ccc, avaxDollarVal, event, from, block) => {
+const sellFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
   return [
     { name: 'Transaction', value: 'Sell CCC' },
     {
@@ -71,6 +97,17 @@ const sellFields = (avax, ccc, avaxDollarVal, event, from, block) => {
       )}🔺 ($${avaxDollarVal.toLocaleString('en-IN', LOCALE_FRACTION)})`,
     },
     {
+      name: 'CCC Price',
+      value: cccData.price,
+
+      inline: true,
+    },
+    {
+      name: 'Market Cap',
+      value: numeral(cccData.marketCap).format('$0.0a').toUpperCase(),
+      inline: true,
+    },
+    {
       name: 'Tx Hash',
       value: `[${event.transactionHash}](https://snowtrace.io/tx/${event.transactionHash})`,
     },
@@ -84,6 +121,21 @@ const sellFields = (avax, ccc, avaxDollarVal, event, from, block) => {
         new Date(parseInt(block.timestamp) * 1000),
         'MMM do y h:mm a'
       ),
+    },
+    {
+      name: 'CCC Site',
+      value: `[Link](https://crosschaincapital.finance/)`,
+      inline: true,
+    },
+    {
+      name: 'TJ',
+      value: `[Buy](https://traderjoexyz.com/trade?outputCurrency=0x4939B3313E73ae8546b90e53E998E82274afDbDB)`,
+      inline: true,
+    },
+    {
+      name: 'Dex',
+      value: `[Link](https://dexscreener.com/avalanche/0x306e2fe26cb13f1315d83a2f2297c12b14574dc2)`,
+      inline: true,
     },
   ];
 };

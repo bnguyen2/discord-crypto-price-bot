@@ -1,5 +1,5 @@
 const { ethers } = require('ethers');
-const { fetchTokenPrice } = require('./utils');
+const { fetchTokenPrice, fetchCCCPrice } = require('./utils');
 
 const {
   discordSetup,
@@ -43,6 +43,7 @@ async function CCCSalesBot() {
       const cccForAvax = Number(ethers.utils.formatUnits(amt1Out, 18));
       const block = await event.getBlock();
       const avaxPrice = await fetchTokenPrice(wAVAX, 'avalanche');
+      const cccData = await fetchCCCPrice();
 
       let message;
 
@@ -57,7 +58,8 @@ async function CCCSalesBot() {
             avaxDollarVal,
             event,
             from,
-            block
+            block,
+            cccData
           ),
         });
       } else if (sellCCC > buyCCC) {
@@ -71,7 +73,8 @@ async function CCCSalesBot() {
             avaxDollarVal,
             event,
             from,
-            block
+            block,
+            cccData
           ),
         });
       }
