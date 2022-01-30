@@ -134,7 +134,7 @@ const sellFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
       inline: true,
     },
     {
-      name: 'Dex',
+      name: 'Dex Screener',
       value: `[Link](https://dexscreener.com/avalanche/0x306e2fe26cb13f1315d83a2f2297c12b14574dc2)`,
       inline: true,
     },
