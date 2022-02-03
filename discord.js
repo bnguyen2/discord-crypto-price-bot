@@ -25,7 +25,15 @@ const createMessage = ({ color, fields }) =>
     .setColor(color)
     .addFields(fields);
 
-const buyFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
+const buyFields = (
+  avax,
+  ccc,
+  avaxDollarVal,
+  transactionHash,
+  from,
+  blockTimestamp,
+  cccData
+) => {
   return [
     { name: 'Transaction', value: 'Buy CCC' },
     {
@@ -52,7 +60,7 @@ const buyFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
     },
     {
       name: 'Tx Hash',
-      value: `[${event.transactionHash}](https://snowtrace.io/tx/${event.transactionHash})`,
+      value: `[${transactionHash}](https://snowtrace.io/tx/${transactionHash})`,
     },
     {
       name: 'Wallet',
@@ -60,10 +68,7 @@ const buyFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
     },
     {
       name: 'Block Time',
-      value: format(
-        new Date(parseInt(block.timestamp) * 1000),
-        'MMM do y h:mm a'
-      ),
+      value: format(new Date(`${blockTimestamp}`), 'MMM do y h:mm a'),
     },
     {
       name: 'CCC Website',
@@ -83,7 +88,15 @@ const buyFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
   ];
 };
 
-const sellFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
+const sellFields = (
+  avax,
+  ccc,
+  avaxDollarVal,
+  transactionHash,
+  from,
+  blockTimestamp,
+  cccData
+) => {
   return [
     { name: 'Transaction', value: 'Sell CCC' },
     {
@@ -110,7 +123,7 @@ const sellFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
     },
     {
       name: 'Tx Hash',
-      value: `[${event.transactionHash}](https://snowtrace.io/tx/${event.transactionHash})`,
+      value: `[${transactionHash}](https://snowtrace.io/tx/${transactionHash})`,
     },
     {
       name: 'Wallet',
@@ -118,10 +131,7 @@ const sellFields = (avax, ccc, avaxDollarVal, event, from, block, cccData) => {
     },
     {
       name: 'Block Time',
-      value: format(
-        new Date(parseInt(block.timestamp) * 1000),
-        'MMM do y h:mm a'
-      ),
+      value: format(new Date(`${blockTimestamp}`), 'MMM do y h:mm a'),
     },
     {
       name: 'CCC Site',
