@@ -25,13 +25,15 @@ async function fetchTokenPrice(address, chain) {
     return data.usdPrice;
   } catch (err) {
     console.error('err', JSON.stringify(err, null, 2));
-    return err.message;
+    if (myCache.has('price')) {
+      return myCache.get('price');
+    }
   }
 }
 
 async function fetchCCCPrice() {
   const url =
-    'https://io6.dexscreener.io/u/trading-history/recent/avalanche/0x306e2fe26cb13f1315d83a2f2297c12b14574dc2';
+    'https://api.dexscreener.io/latest/dex/pairs/avalanche/0x306e2fe26cb13f1315d83a2f2297c12b14574dc2';
 
   if (myCache.has('cccPrice')) {
     return myCache.get('cccPrice');
@@ -40,25 +42,28 @@ async function fetchCCCPrice() {
   try {
     const response = await axios.get(url);
     const data = response.data;
-    const cccPrice = data.tradingHistory[0].priceUsd;
+    const cccPrice = data.pair.priceUsd;
+    const marketCap = data.pair.fdv;
 
     // set cache with 5s ttl
     myCache.set(
       'cccPrice',
       {
         price: cccPrice,
-        marketCap: parseFloat(cccPrice) * 1500000000000,
+        marketCap: marketCap,
       },
       5
     );
 
     return {
       price: cccPrice,
-      marketCap: parseFloat(cccPrice) * 1500000000000,
+      marketCap: marketCap,
     };
   } catch (err) {
     console.error('err', JSON.stringify(err, null, 2));
-    return err.message;
+    if (myCache.has('cccPrice')) {
+      return myCache.get('cccPrice');
+    }
   }
 }
 
