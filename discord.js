@@ -59,6 +59,11 @@ const buyFields = (
       inline: true,
     },
     {
+      name: 'Liquidity',
+      value: numeral(cccData.liquidity).format('$0.0a').toUpperCase(),
+      inline: true,
+    },
+    {
       name: 'Tx Hash',
       value: `[${transactionHash}](https://snowtrace.io/tx/${transactionHash})`,
     },
@@ -113,12 +118,16 @@ const sellFields = (
     {
       name: 'CCC Price',
       value: cccData.price,
-
       inline: true,
     },
     {
       name: 'Market Cap',
       value: numeral(cccData.marketCap).format('$0.0a').toUpperCase(),
+      inline: true,
+    },
+    {
+      name: 'Liquidity',
+      value: numeral(cccData.liquidity).format('$0.0a').toUpperCase(),
       inline: true,
     },
     {

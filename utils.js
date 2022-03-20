@@ -44,20 +44,23 @@ async function fetchCCCPrice() {
     const data = response.data;
     const cccPrice = data.pair.priceUsd;
     const marketCap = data.pair.fdv;
+    const liquidity = data.pair.liquidity.usd;
 
     // set cache with 5s ttl
     myCache.set(
       'cccPrice',
       {
         price: cccPrice,
-        marketCap: marketCap,
+        marketCap,
+        liquidity,
       },
       5
     );
 
     return {
       price: cccPrice,
-      marketCap: marketCap,
+      marketCap,
+      liquidity,
     };
   } catch (err) {
     console.error('err', JSON.stringify(err, null, 2));
